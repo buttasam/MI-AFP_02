@@ -26,9 +26,14 @@ right Nil = Nil
 right (Node _ _ r) = r
 
 -- | Check whether is @BSTree@ valid (i.e., does not violate any rule)
--- TODO: implement validity check
 isValid :: Ord a => BSTree a -> Bool
-isValid _ = undefined
+isValid Nil = True
+isValid tree = isValidNode tree && (isValid (left tree) && isValid (right tree))
+
+isValidNode tree = ((left tree == Nil) && (right tree == Nil))
+            || ((left tree == Nil) && ( value (right tree) > value tree))
+            || ((right tree == Nil) && ( value (left tree) < value tree))
+            || ((left tree /= Nil)) && (right tree /= Nil) && ((value (left tree) < value tree) && ( value (right tree) > value tree))
 
 -- | Check whether is @BSTree@ is leaf
 isLeaf :: Ord a => BSTree a -> Bool
