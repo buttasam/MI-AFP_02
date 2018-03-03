@@ -35,9 +35,9 @@ isLeaf :: Ord a => BSTree a -> Bool
 isLeaf tree = (tree /= Nil) && (left tree == Nil) && (right tree == Nil)
 
 -- | Count all nodes in @BSTree@
--- TODO: implement counting all nodes of the tree
 size :: BSTree a -> Integer
-size _ = undefined
+size Nil = 0
+size tree = 1 + (size (left tree)) + (size (right tree))
 
 -- | Height of @BSTree@ (height of @Nil@ is 0)
 -- TODO: implement finding out height of the tree
