@@ -28,12 +28,12 @@ right (Node _ _ r) = r
 -- | Check whether is @BSTree@ valid (i.e., does not violate any rule)
 isValid :: Ord a => BSTree a -> Bool
 isValid Nil = True
-isValid tree = isValidNode tree && (isValid (left tree) && isValid (right tree))
+isValid tree = sorted (toList tree)
 
-isValidNode tree = ((left tree == Nil) && (right tree == Nil))
-            || ((left tree == Nil) && ( value (right tree) > value tree))
-            || ((right tree == Nil) && ( value (left tree) < value tree))
-            || ((left tree /= Nil)) && (right tree /= Nil) && ((value (left tree) < value tree) && ( value (right tree) > value tree))
+sorted :: (Ord a) => [a] -> Bool
+sorted [] = True
+sorted [x] = True
+sorted (x:y:xs) = if x <= y then sorted (y:xs) else False
 
 -- | Check whether is @BSTree@ is leaf
 isLeaf :: Ord a => BSTree a -> Bool
@@ -45,19 +45,22 @@ size Nil = 0
 size tree = 1 + (size (left tree)) + (size (right tree))
 
 -- | Height of @BSTree@ (height of @Nil@ is 0)
--- TODO: implement finding out height of the tree
 height :: BSTree a -> Integer
-height _ = undefined
+height Nil = 0
+height (Node root left right) = (if (height right) > (height left) then (height right) else (height left)) + 1
 
 -- | Minimal height in the @BSTree@ (height of @Nil@ is 0)
--- TODO: implement finding out minimal depth of the tree
 minHeight :: BSTree a -> Integer
-minHeight _ = undefined
+minHeight Nil = 0
+minHeight (Node root left right) = (if (minHeight right) < (minHeight left) then (minHeight right) else (minHeight left)) + 1
 
 -- | Check if given element is in the @BSTree@
--- TODO: implement finding out if element is in the tree
 contains :: Ord a => BSTree a -> a -> Bool
-contains _ _ = undefined
+contains Nil _ = False
+contains (Node root left right) a
+                | root == a = True
+                | a < root = contains left a
+                | a > root = contains right a
 
 -- | Create new tree with given element inserted
 -- TODO: implement insertion to the tree
