@@ -88,6 +88,7 @@ spec = do
       size intTreeE `shouldBe` 7
       size intTreeG `shouldBe` 2
       size intTreeJ `shouldBe` 4
+
   describe "height" $ do
     it "computes height of trivial tree (empty and mkLeaf)" $ do
       height (Nil :: BSTree Double) `shouldBe` 0
@@ -111,6 +112,7 @@ spec = do
       minHeight intTreeE `shouldBe` 3
       minHeight intTreeG `shouldBe` 1
       minHeight intTreeJ `shouldBe` 1
+
   describe "contains" $ do
     it "checks if element is in trivial tree (mixed)" $ do
       ((Nil :: BSTree Double) `contains` 7) `shouldBe` False
@@ -144,6 +146,7 @@ spec = do
       (intTreeI `contains` 12) `shouldBe` False
       (intTreeI `contains` 10) `shouldBe` True
       (intTreeI `contains` 20) `shouldBe` False
+
   describe "insert" $ do
     it "inserts element to trivial tree" $ do
       (Nil `insert` 7) `shouldBe` mkLeaf 7
@@ -190,6 +193,7 @@ spec = do
       (intTreeF `delete` 7) `shouldBe` intTreeFd7
       (intTreeH `delete` 10) `shouldBe` intTreeHd10
       (intTreeI `delete` 10) `shouldBe` intTreeId10
+
   describe "toList" $ do
     it "converts trivial tree to list" $ do
       toList (Nil :: BSTree Double) `shouldBe` ([] :: [Double])
@@ -206,6 +210,7 @@ spec = do
       toList intTreeF `shouldBe` [7, 2]
       toList intTreeG `shouldBe` [2, -7]
       toList intTreeH `shouldBe` [15, 20, 157, 10, 5, 7, 8]
+
   describe "fromList" $ do
     it "converts list to trivial tree" $ do
       fromList ([] :: [Double]) `shouldBe` (Nil :: BSTree Double)
