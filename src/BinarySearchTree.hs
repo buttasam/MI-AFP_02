@@ -95,6 +95,22 @@ toList tree = (toList (left tree)) ++ [value tree] ++ (toList (right tree))
 -- | Build new @BSTree@ from arbitrary list with use of median (left if even)
 -- TODO: implement conversion from list to tree, use median (hint: sort)
 fromList :: Ord a => [a] -> BSTree a
-fromList _ = undefined
+fromList list = Nil
+
+leftList :: Ord a => [a] -> a -> [a]
+leftList (x:xs) a
+          | a == x = []
+          | otherwise = [x] ++ (leftList xs a)
+
+firstIndex :: Ord a => [a] -> a -> Int
+firstIndex (x:xs) a
+          | a == x = 0
+          | otherwise = 1 + (firstIndex xs a)
+
+rightList :: Ord a => [a] -> a -> [a]
+rightList list a = dropWhile (<=a) list
 
 
+median :: Ord a => [a] -> a
+median list = list !! ((div (size + 1) 2) - 1)
+     where size = length list
