@@ -71,9 +71,21 @@ insert (Node root left right) x
     | root  > x = Node root (insert left x) right
 
 -- | Create new tree with given element deleted (min element in the right subtree strategy)
--- TODO: implement deletion from the tree
 delete :: Ord a => BSTree a -> a -> BSTree a
-delete _ _ = undefined
+delete Nil _ = Nil
+delete (Node root left right) x
+     | x == root = deleteRoot (Node root left right)
+     | x < root = Node root (delete left x) right
+     | x > root = Node root left (delete right x)
+     where
+        deleteRoot :: Ord a => BSTree a -> BSTree a
+        deleteRoot (Node root Nil right) = right
+        deleteRoot (Node root left Nil) = left
+        deleteRoot (Node root left right) = (Node (leftest right) left (delete right (leftest right)))
+                                           where
+                                              leftest :: (Ord a) => BSTree a -> a
+                                              leftest (Node root Nil  _) = root
+                                              leftest (Node _ left _) = leftest left
 
 -- | Convert @BSTree@ to list (will be in ascending order if tree is valid)
 toList :: BSTree a -> [a]
