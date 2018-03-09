@@ -1,6 +1,7 @@
 module BinarySearchTree where
 
 import qualified Data.List
+import qualified Data.List.Unique
 -- You might want to use some externals. Better use qualified import
 -- so there won't be any clash
 -- for example instead of "sort" (from Data.List) use "Data.List.sort"
@@ -93,19 +94,16 @@ toList Nil = []
 toList tree = (toList (left tree)) ++ [value tree] ++ (toList (right tree))
 
 -- | Build new @BSTree@ from arbitrary list with use of median (left if even)
--- TODO: implement conversion from list to tree, use median (hint: sort)
 fromList :: Ord a => [a] -> BSTree a
-fromList list = Nil
+fromList [] = Nil
+fromList [x] = (Node x Nil Nil)
+fromList list = Node m (fromList (leftList sortList m)) (fromList (rightList sortList m))
+               where
+                  m = median sortList
+                  sortList = Data.List.Unique.sortUniq list
 
 leftList :: Ord a => [a] -> a -> [a]
-leftList (x:xs) a
-          | a == x = []
-          | otherwise = [x] ++ (leftList xs a)
-
-firstIndex :: Ord a => [a] -> a -> Int
-firstIndex (x:xs) a
-          | a == x = 0
-          | otherwise = 1 + (firstIndex xs a)
+leftList list a = takeWhile(<a) list
 
 rightList :: Ord a => [a] -> a -> [a]
 rightList list a = dropWhile (<=a) list
