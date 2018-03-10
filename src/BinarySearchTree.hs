@@ -1,6 +1,7 @@
 module BinarySearchTree where
 
 import qualified Data.List
+import qualified Data.List.Unique
 -- You might want to use some externals. Better use qualified import
 -- so there won't be any clash
 -- for example instead of "sort" (from Data.List) use "Data.List.sort"
@@ -26,53 +27,88 @@ right Nil = Nil
 right (Node _ _ r) = r
 
 -- | Check whether is @BSTree@ valid (i.e., does not violate any rule)
--- TODO: implement validity check
 isValid :: Ord a => BSTree a -> Bool
-isValid _ = undefined
+isValid Nil = True
+isValid tree = sorted (toList tree)
+
+sorted :: (Ord a) => [a] -> Bool
+sorted [] = True
+sorted [x] = True
+sorted (x:y:xs) = if x <= y then sorted (y:xs) else False
 
 -- | Check whether is @BSTree@ is leaf
--- TODO: implement leaf check
 isLeaf :: Ord a => BSTree a -> Bool
-isLeaf _ = undefined
+isLeaf tree = (tree /= Nil) && (left tree == Nil) && (right tree == Nil)
 
 -- | Count all nodes in @BSTree@
--- TODO: implement counting all nodes of the tree
 size :: BSTree a -> Integer
-size _ = undefined
+size Nil = 0
+size tree = 1 + (size (left tree)) + (size (right tree))
 
 -- | Height of @BSTree@ (height of @Nil@ is 0)
--- TODO: implement finding out height of the tree
 height :: BSTree a -> Integer
-height _ = undefined
+height Nil = 0
+height (Node root left right) = (if (height right) > (height left) then (height right) else (height left)) + 1
 
 -- | Minimal height in the @BSTree@ (height of @Nil@ is 0)
--- TODO: implement finding out minimal depth of the tree
 minHeight :: BSTree a -> Integer
-minHeight _ = undefined
+minHeight Nil = 0
+minHeight (Node root left right) = (if (minHeight right) < (minHeight left) then (minHeight right) else (minHeight left)) + 1
 
 -- | Check if given element is in the @BSTree@
--- TODO: implement finding out if element is in the tree
 contains :: Ord a => BSTree a -> a -> Bool
-contains _ _ = undefined
+contains Nil _ = False
+contains (Node root left right) a
+    | root == a = True
+    | a < root = contains left a
+    | a > root = contains right a
 
 -- | Create new tree with given element inserted
--- TODO: implement insertion to the tree
 insert :: Ord a => BSTree a -> a -> BSTree a
-insert _ _ = undefined
+insert Nil x = Node x Nil Nil
+insert (Node root left right) x
+    | root == x = Node root left right
+    | root  < x = Node root left (insert right x)
+    | root  > x = Node root (insert left x) right
 
 -- | Create new tree with given element deleted (min element in the right subtree strategy)
--- TODO: implement deletion from the tree
 delete :: Ord a => BSTree a -> a -> BSTree a
-delete _ _ = undefined
+delete Nil _ = Nil
+delete (Node root left right) x
+     | x == root = deleteRoot (Node root left right)
+     | x < root = Node root (delete left x) right
+     | x > root = Node root left (delete right x)
+     where
+        deleteRoot :: Ord a => BSTree a -> BSTree a
+        deleteRoot (Node root Nil right) = right
+        deleteRoot (Node root left Nil) = left
+        deleteRoot (Node root left right) = (Node (leftest right) left (delete right (leftest right)))
+                                           where
+                                              leftest :: (Ord a) => BSTree a -> a
+                                              leftest (Node root Nil  _) = root
+                                              leftest (Node _ left _) = leftest left
 
 -- | Convert @BSTree@ to list (will be in ascending order if tree is valid)
--- TODO: implement conversion from tree to list
 toList :: BSTree a -> [a]
-toList _ = undefined
+toList Nil = []
+toList tree = (toList (left tree)) ++ [value tree] ++ (toList (right tree))
 
 -- | Build new @BSTree@ from arbitrary list with use of median (left if even)
--- TODO: implement conversion from list to tree, use median (hint: sort)
 fromList :: Ord a => [a] -> BSTree a
-fromList _ = undefined
+fromList [] = Nil
+fromList [x] = (Node x Nil Nil)
+fromList list = Node m (fromList (leftList sortList m)) (fromList (rightList sortList m))
+               where
+                  m = median sortList
+                  sortList = Data.List.Unique.sortUniq list
+
+leftList :: Ord a => [a] -> a -> [a]
+leftList list a = takeWhile(<a) list
+
+rightList :: Ord a => [a] -> a -> [a]
+rightList list a = dropWhile (<=a) list
 
 
+median :: Ord a => [a] -> a
+median list = list !! ((div (size + 1) 2) - 1)
+     where size = length list
